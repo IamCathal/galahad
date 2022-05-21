@@ -1,0 +1,10 @@
+
+version: '3.2'
+
+services:
+  galahad:
+    build:
+      context: .
+    container_name: galahadService
+    ports:
+      - "2944:2944"

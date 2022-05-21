@@ -53,8 +53,8 @@ func getCPUUsagePercentage() {
 
 		currCPUUsage := float32(float64(after.User-before.User) / total * 100)
 		cpuUsagePercentages = append([]float32{currCPUUsage}, cpuUsagePercentages...)
-		if len(cpuUsagePercentages) > 6 {
-			cpuUsagePercentages = cpuUsagePercentages[:6]
+		if len(cpuUsagePercentages) > 60 {
+			cpuUsagePercentages = cpuUsagePercentages[:60]
 		}
 		time.Sleep(1 * time.Second)
 	}
@@ -72,8 +72,8 @@ func GetCurrentRAMUsagePercentage() {
 		currMemoryUsagePercentage := float32(currMemoryUsage / totalRAM)
 
 		memoryUsagePercentages = append([]float32{currMemoryUsagePercentage}, memoryUsagePercentages...)
-		if len(memoryUsagePercentages) > 6 {
-			memoryUsagePercentages = memoryUsagePercentages[:6]
+		if len(memoryUsagePercentages) > 60 {
+			memoryUsagePercentages = memoryUsagePercentages[:60]
 		}
 		time.Sleep(1 * time.Second)
 	}
@@ -90,10 +90,10 @@ func getAverageOfNumbers(slice []float32) float32 {
 func GetMetrics() Metrics {
 	return Metrics{
 		CurrCPUUsagePercentage:                cpuUsagePercentages[0],
-		ThirtySecondCPUUsageAverage:           getAverageOfNumbers(cpuUsagePercentages[:3]),
+		ThirtySecondCPUUsageAverage:           getAverageOfNumbers(cpuUsagePercentages[:30]),
 		SixtySecondCPUUsageAverage:            getAverageOfNumbers(cpuUsagePercentages),
 		CurrRamUsagePercentage:                memoryUsagePercentages[0],
-		ThirtySecondRamUsagePercentageAverage: getAverageOfNumbers(memoryUsagePercentages[:3]),
+		ThirtySecondRamUsagePercentageAverage: getAverageOfNumbers(memoryUsagePercentages[:30]),
 		SixtySecondRamUsagePercentageAverage:  getAverageOfNumbers(memoryUsagePercentages),
 	}
 }

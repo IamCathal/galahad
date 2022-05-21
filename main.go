@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"microservice/example/statsmonitoring"
 	"net/http"
-	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/iamcathal/galahad/statsmonitoring"
 
 	"github.com/gorilla/mux"
 )
@@ -64,6 +64,16 @@ func Metrics(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, string(jsonObj))
 }
 
+func Home(w http.ResponseWriter, r *http.Request) {
+	jsonObj, err := json.MarshalIndent(statsmonitoring.GetMetrics(), "", "\t")
+	if err != nil {
+		log.Fatal(err)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, string(jsonObj))
+}
+
 func logMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("%v %+v\n", time.Now().Format(time.RFC3339), r)
@@ -76,11 +86,12 @@ func main() {
 	ApplicationStartUpTime = time.Now()
 
 	r := mux.NewRouter()
+	r.HandleFunc("/home", Home).Methods("GET")
 	r.HandleFunc("/status", Status).Methods("POST")
 	r.HandleFunc("/metrics", Metrics).Methods("POST")
 
 	r.Handle("/static", http.NotFoundHandler())
-	fs := http.FileServer(http.Dir(os.Getenv("./static")))
+	fs := http.FileServer(http.Dir("./static"))
 	r.PathPrefix("/").Handler(DisallowFileBrowsing(fs))
 	r.Use(logMiddleware)
 
