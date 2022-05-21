@@ -4,16 +4,18 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"microservice/example/statsmonitoring"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
-
-	"github.com/iamcathal/galahad/statsmonitoring"
 
 	"github.com/gorilla/mux"
 )
 
+// UptimeResponse is the standard response
+// for any service's /status endpoint
 type UptimeResponse struct {
 	Status string        `json:"status"`
 	Uptime time.Duration `json:"uptime"`
@@ -25,6 +27,7 @@ var (
 
 func DisallowFileBrowsing(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		r.URL.Path = filepath.Clean(r.URL.Path)
 		if strings.HasSuffix(r.URL.Path, "/") {
 			http.NotFound(w, r)
 			return
