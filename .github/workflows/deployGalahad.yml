@@ -1,0 +1,14 @@
+name: Deploy Galahad
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    name: Deploy galahad job
+    runs-on: [self-hosted]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Deploy docker-compose service
+      run: docker-compose up -d --build --force-recreate
